@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { Button, Card, InputGroup } from '@/components/ui/BaseComponents'; 
 import { useGoogle } from '@/context/GoogleContext';
+import { useTimeTheme } from '@/hooks/useTimeTheme';
+import { LabHeaderShape } from '@/components/ui/CreativeHeaders';
 
 // --- Types ---
     
@@ -64,6 +66,7 @@ const getPerformanceData = (filename: string) => {
 
 export default function LabManualGrader() {
   const { config: googleConfig } = useGoogle();
+  const { textColor } = useTimeTheme();
   
   // --- Config State ---
   const [activeTab, setActiveTab] = useState<'drive' | 'local'>('drive');
@@ -292,10 +295,12 @@ export default function LabManualGrader() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-200 pb-4">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-            <FlaskConical className="text-purple-600" size={32} />
-            Auto-Lab Grader Pro
-          </h2>
+          <div className="flex items-center gap-4 mb-2">
+            <LabHeaderShape />
+            <h2 className={`text-4xl font-extrabold tracking-tight transition-colors duration-500 ${textColor}`}>
+              Auto-Lab Grader Pro
+            </h2>
+          </div>
           <p className="text-gray-500 mt-1">Comparitive Analysis Engine (vs Ideal File)</p>
         </div>
         <div className="flex gap-2">

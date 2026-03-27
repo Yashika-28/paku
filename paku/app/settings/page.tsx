@@ -3,14 +3,20 @@ import React, { useState } from 'react';
 import { User, Link, Eye, EyeOff, RefreshCw, CheckCircle, LogOut, AlertCircle, Database } from 'lucide-react';
 import { Button, Card, InputGroup } from '@/components/ui/BaseComponents';
 import { useGoogle } from '@/context/GoogleContext';
+import { useTimeTheme } from '@/hooks/useTimeTheme';
+import { SettingsHeaderShape } from '@/components/ui/CreativeHeaders';
 
 export default function SettingsPage() {
     const { config, setConfig, initializeGapi, handleAuthClick, handleSignOut } = useGoogle();
+    const { textColor } = useTimeTheme();
     const [showKeys, setShowKeys] = useState(false);
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">System Settings</h2>
+            <div className="flex items-center gap-4 mb-2">
+              <SettingsHeaderShape />
+              <h2 className={`text-4xl font-extrabold tracking-tight transition-colors duration-500 ${textColor}`}>System Settings</h2>
+            </div>
             
             <Card title="Google Workspace Integration" description="Connect to access real Drive and Calendar data.">
                 <div className="space-y-4">

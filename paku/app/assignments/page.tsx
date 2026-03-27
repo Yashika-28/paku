@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { Button, Card, InputGroup } from '@/components/ui/BaseComponents';
 import { useGoogle } from '@/context/GoogleContext';
+import { useTimeTheme } from '@/hooks/useTimeTheme';
+import { AssignmentHeaderShape } from '@/components/ui/CreativeHeaders';
 
 // --- MOCK LOGIC (Hardcoded Results) ---
 const REASONING_BANK = {
@@ -46,6 +48,7 @@ const getBaseScore = (difficulty: string) => {
 
 export default function AssignmentChecker() {
   const { config } = useGoogle();
+  const { textColor } = useTimeTheme();
   
   // --- Config State ---
   const [activeTab, setActiveTab] = useState<'drive' | 'local'>('drive');
@@ -270,10 +273,13 @@ export default function AssignmentChecker() {
     <div className="max-w-5xl mx-auto space-y-6 pb-20 font-sans">
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-           <h2 className="text-2xl font-bold text-gray-800">Assignment AI Grader</h2>
-           <p className="text-gray-500">Semantic Text Analysis & Auto-Grading</p>
+           <div className="flex items-center gap-4 mb-2">
+             <AssignmentHeaderShape />
+             <h2 className={`text-4xl font-extrabold tracking-tight transition-colors duration-500 ${textColor}`}>Assignment AI Grader</h2>
+           </div>
+           <p className="text-gray-500 text-lg">Semantic Text Analysis & Auto-Grading</p>
         </div>
         <div className={`px-3 py-1 rounded-full text-xs font-semibold uppercase flex items-center gap-2 ${config?.accessToken ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             <HardDrive size={14}/> {config?.accessToken ? 'Drive Connected' : 'Drive Offline'}
@@ -354,10 +360,10 @@ export default function AssignmentChecker() {
             </div>
 
             {activeTab === 'drive' ? (
-                <div className="flex gap-2">
+                <div className="flex gap-3 items-end">
                     <div className="flex-1"><InputGroup label="" placeholder="Drive Folder ID / Link" value={driveLink} onChange={(e:any) => setDriveLink(e.target.value)} icon={HardDrive} /></div>
-                    <Button onClick={fetchDriveFiles} disabled={!config?.accessToken || isFetchingDrive} icon={BookOpen}>
-                        {isFetchingDrive ? 'Fetching...' : 'Fetch'}
+                    <Button onClick={fetchDriveFiles} disabled={!config?.accessToken || isFetchingDrive} icon={BookOpen} className="px-8 py-3 h-[42px] mb-1">
+                        {isFetchingDrive ? 'Fetching...' : 'Fetch Files'}
                     </Button>
                 </div>
             ) : (

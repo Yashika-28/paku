@@ -2,8 +2,11 @@
 import React, { useState } from 'react';
 import { Plus, FileText, Calendar, Clock, Save, X } from 'lucide-react';
 import { Button, Card, InputGroup } from '@/components/ui/BaseComponents';
+import { useTimeTheme } from '@/hooks/useTimeTheme';
+import { CreateHeaderShape } from '@/components/ui/CreativeHeaders';
 
 export default function CreateAssignmentPage() {
+  const { textColor } = useTimeTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -33,10 +36,12 @@ export default function CreateAssignmentPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Plus size={24} className="text-blue-600" />
-            Create New Assignment
-          </h2>
+          <div className="flex items-center gap-4 mb-2">
+            <CreateHeaderShape />
+            <h2 className={`text-4xl font-extrabold tracking-tight transition-colors duration-500 ${textColor}`}>
+              Create New Assignment
+            </h2>
+          </div>
           <p className="text-gray-500">Design and publish assignments for your students</p>
         </div>
         <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white" icon={Save}>
