@@ -70,6 +70,153 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
   );
 };
 
+// --- New Widgets ---
+const FocusTimer = () => {
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    let interval: any = null;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft]);
+
+  const toggle = () => setIsActive(!isActive);
+  const reset = () => { setIsActive(false); setTimeLeft(25 * 60); };
+
+  const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const secs = (timeLeft % 60).toString().padStart(2, '0');
+  const progress = ((25 * 60 - timeLeft) / (25 * 60)) * 100;
+
+  return (
+    <Card className="p-6 relative overflow-hidden group">
+      <div className="flex justify-between items-center mb-4 relative z-10">
+        <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <Clock size={18} className="text-rose-500" /> Focus Timer
+        </h3>
+        <button onClick={reset} className="text-gray-400 hover:text-gray-700 transition active:scale-95">
+          <RefreshCw size={14} />
+        </button>
+      </div>
+      
+      <div className="flex flex-col items-center justify-center relative z-10">
+        <div className="relative w-32 h-32 flex items-center justify-center mb-4">
+          <svg className="w-full h-full transform -rotate-90 absolute inset-0 drop-shadow-sm">
+            <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-100 dark:text-slate-700/50" />
+            <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="364.4" strokeDashoffset={364.4 - (364.4 * progress) / 100} className="text-rose-500 transition-all duration-1000 ease-linear drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]" strokeLinecap="round" />
+          </svg>
+          <div className="bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 absolute inset-2 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.1),_0_2px_10px_rgba(0,0,0,0.1)] flex items-center justify-center">
+            <span className="text-3xl font-extrabold tracking-tighter text-gray-800 dark:text-white tabular-nums drop-shadow-sm">{mins}:{secs}</span>
+          </div>
+        </div>
+        
+        <Button onClick={toggle} className="w-full bg-gradient-to-b from-rose-400 to-rose-600 text-white border border-rose-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),_0_3px_5px_rgba(0,0,0,0.2)] active:shadow-[inset_0_3px_5px_rgba(0,0,0,0.4)]">
+          {isActive ? 'Pause Session' : 'Start Focus'}
+        </Button>
+      </div>
+    </Card>
+  );
+};
+
+const TodoList = () => {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Grade Python midterms", done: false },
+    { id: 2, text: "Email TAs about lab setup", done: true },
+    { id: 3, text: "Finalize guest speaker", done: false }
+  ]);
+  const [newTask, setNewTask] = useState("");
+
+  const addTask = (e: any) => {
+    e.preventDefault();
+    if (!newTask.trim()) return;
+    setTodos([...todos, { id: Date.now(), text: newTask, done: false }]);
+    setNewTask("");
+  };
+
+  const toggleTodo = (id: number) => {
+    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  };
+
+  return (
+    <Card className="p-5">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <CheckCircle size={18} className="text-indigo-500" /> Tasks
+        </h3>
+        <span className="text-xs font-bold text-gray-400 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full shadow-inner">{todos.filter(t => t.done).length}/{todos.length}</span>
+      </div>
+      
+      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin">
+        {todos.map(todo => (
+          <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all ${todo.done ? 'opacity-60 bg-transparent' : 'hover:bg-gray-50 dark:hover:bg-slate-700/30'}`}>
+            <div className={`w-5 h-5 rounded-md flex-shrink-0 border-2 flex items-center justify-center transition-all ${todo.done ? 'bg-indigo-500 border-indigo-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]' : 'bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 border-gray-300 dark:border-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_2px_4px_rgba(0,0,0,0.1)]'}`}>
+              {todo.done && <CheckCircle size={12} className="text-white drop-shadow-sm" />}
+            </div>
+            <p className={`text-sm font-medium transition-all ${todo.done ? 'line-through text-gray-500 dark:text-slate-400' : 'text-gray-700 dark:text-slate-200'}`}>
+              {todo.text}
+            </p>
+          </div>
+        ))}
+      </div>
+      
+      <form onSubmit={addTask} className="mt-3 relative">
+        <input 
+          type="text" 
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          placeholder="Add new task..." 
+          className="w-full bg-gray-100/50 dark:bg-slate-800/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] rounded-lg pl-3 pr-10 py-2.5 text-sm outline-none border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 transition-all text-gray-800 dark:text-white placeholder:text-gray-400"
+        />
+        <button type="submit" className="absolute right-1.5 top-1.5 p-1.5 bg-gradient-to-b from-indigo-400 to-indigo-600 rounded-md text-white border border-indigo-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),_0_2px_4px_rgba(0,0,0,0.1)] active:scale-95 transition-all">
+          <Plus size={14} />
+        </button>
+      </form>
+    </Card>
+  );
+};
+
+const DeadlinesList = () => {
+  const [deadlines, setDeadlines] = useState<any[]>([]);
+
+  useEffect(() => {
+    const now = Date.now();
+    setDeadlines([
+      { id: 1, title: 'Midterm Grades', date: new Date(now + 2 * 86400000), color: 'emerald' },
+      { id: 2, title: 'Faculty Meeting', date: new Date(now + 5 * 86400000), color: 'amber' },
+      { id: 3, title: 'Draft Proposals', date: new Date(now + 12 * 86400000), color: 'indigo' }
+    ]);
+  }, []);
+
+  if(!deadlines.length) return null;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {deadlines.map((dl, i) => {
+        const daysLeft = Math.ceil((dl.date.getTime() - Date.now()) / 86400000);
+        return (
+          <Card key={dl.id} className={`p-5 !border-t-4 animate-slide-in-up`} style={{ borderTopColor: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#6366f1', animationDelay: `${i * 100}ms` }}>
+            <p className="text-xs uppercase font-extrabold text-gray-500 dark:text-slate-400 mb-1 tracking-wider">{dl.title}</p>
+            <div className="flex items-end gap-2">
+              <span className="text-4xl font-extrabold tracking-tighter tabular-nums drop-shadow-sm" style={{ color: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#818cf8' }}>{daysLeft}</span>
+              <span className="text-sm font-bold opacity-70 mb-1.5 uppercase">Days</span>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">{dl.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <div className="h-1.5 flex-1 mx-3 bg-gray-200 dark:bg-slate-700 shadow-inner rounded-full overflow-hidden">
+                <div className="h-full rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.4)]" style={{ backgroundColor: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#6366f1', width: `${Math.max(5, 100 - (daysLeft * 5))}%` }} />
+              </div>
+            </div>
+          </Card>
+        );
+      })}
+    </div>
+  );
+};
+
 // --- API & Logic Hooks ---
 
 import { useTimeTheme } from '@/hooks/useTimeTheme';
@@ -359,6 +506,14 @@ export default function Dashboard() {
               </Card>
             </div>
 
+            {/* Upcoming Deadlines */}
+            <div className="space-y-4 animate-fade-in-up delay-400 mb-8">
+              <h3 className={`text-xl font-bold flex items-center gap-2 ${textColor} transition-colors duration-500`}>
+                <Clock size={20} className="opacity-70" /> Upcoming Deadlines
+              </h3>
+              <DeadlinesList />
+            </div>
+
             {/* Classes Section */}
             <div className="space-y-4 animate-fade-in-up delay-500">
               <h3 className={`text-xl font-bold flex items-center gap-2 ${textColor} transition-colors duration-500`}>
@@ -406,6 +561,11 @@ export default function Dashboard() {
 
           {/* --- Right Column (Widgets) --- */}
           <div className="space-y-6">
+
+            {/* Focus Timer */}
+            <div className="animate-slide-in-right delay-100">
+              <FocusTimer />
+            </div>
 
             {/* Weather Widget */}
             <Card className="p-6 relative overflow-hidden text-gray-800 dark:text-slate-200 animate-slide-in-right delay-200">
@@ -492,6 +652,11 @@ export default function Dashboard() {
                 )}
               </div>
             </Card>
+
+            {/* Interactive To-Do List */}
+            <div className="animate-slide-in-right delay-350">
+              <TodoList />
+            </div>
 
             {/* News Widget */}
             <Card className="p-5 animate-slide-in-right delay-400">
