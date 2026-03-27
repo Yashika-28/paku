@@ -35,6 +35,41 @@ const Button = ({ children, onClick, variant = "primary", className = "", icon: 
   );
 };
 
+const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [quote]);
+
+  useEffect(() => {
+    if (index < quote.length) {
+      const timer = setTimeout(() => {
+        setIndex((prev) => prev + 1);
+      }, 35);
+      return () => clearTimeout(timer);
+    }
+  }, [index, quote.length]);
+
+  const displayedText = quote.substring(0, index);
+  const isTyping = index < quote.length;
+
+  return (
+    <div translate="no" spellCheck="false" data-gramm="false">
+      <p className="text-lg font-medium italic leading-relaxed text-indigo-50">
+        &quot;{displayedText}&quot;
+        {isTyping && <span className="animate-pulse inline-block w-1.5 h-4 ml-1 bg-indigo-200 align-middle"></span>}
+      </p>
+      
+      <div className={`mt-3 transition-opacity duration-1000 ${!isTyping ? 'opacity-100' : 'opacity-0'}`}>
+        <p className="text-sm font-bold opacity-60 uppercase tracking-widest text-indigo-200">
+          — {author}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 // --- API & Logic Hooks ---
 
 import { useTimeTheme } from '@/hooks/useTimeTheme';
@@ -272,13 +307,16 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Quote Widget */}
-            {quote && (
-              <div className="animate-fade-in-up delay-100 bg-gradient-to-br from-gray-900/90 to-slate-800/90 dark:from-slate-800/90 dark:to-slate-900/90 backdrop-blur-md rounded-2xl p-6 text-white shadow-xl shadow-gray-900/10 dark:shadow-black/20 border border-white/10 dark:border-slate-700/30 breathing-glow">
-                <Quote className="opacity-30 mb-2" size={24} />
-                <p className="text-lg font-medium italic leading-relaxed text-indigo-50">&quot;{quote.quote}&quot;</p>
-                <p className="mt-3 text-sm font-bold opacity-60 uppercase tracking-widest text-indigo-200">— {quote.author}</p>
-              </div>
-            )}
+            <div className="animate-fade-in-up delay-100 bg-gradient-to-br from-gray-900/90 to-slate-800/90 dark:from-slate-800/90 dark:to-slate-900/90 backdrop-blur-md rounded-2xl p-6 text-white shadow-xl shadow-gray-900/10 dark:shadow-black/20 border border-white/10 dark:border-slate-700/30 breathing-glow min-h-[160px] flex flex-col justify-center">
+              <Quote className="opacity-30 mb-2" size={24} />
+              {quote ? (
+                <ChatbotQuote quote={quote.quote} author={quote.author} />
+              ) : (
+                <div className="flex items-center gap-3 text-indigo-200/60 text-sm mt-2 font-medium">
+                  <Loader2 size={16} className="animate-spin" /> Gathering an inspiring thought...
+                </div>
+              )}
+            </div>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
