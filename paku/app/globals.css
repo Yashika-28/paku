@@ -9,4 +9,10 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: #f8fafc;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background: #0f172a;
+  color: #e2e8f0;
 }

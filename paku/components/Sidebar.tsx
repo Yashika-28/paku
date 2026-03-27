@@ -29,17 +29,17 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   ];
 
   return (
-    <aside className={`${isOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex flex-col fixed h-full z-20`}>
+    <aside className={`${isOpen ? 'w-64' : 'w-20'} bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 transition-all duration-300 flex flex-col fixed h-full z-20`}>
       
       {/* Header */}
-      <div className="p-6 flex items-center gap-3 border-b border-gray-100 h-20">
-        <div className="bg-blue-600 text-white p-2 rounded-lg shrink-0 shadow-lg shadow-blue-200">
+      <div className="p-6 flex items-center gap-3 border-b border-gray-100 dark:border-slate-700 h-20">
+        <div className="bg-blue-600 text-white p-2 rounded-lg shrink-0 shadow-lg shadow-blue-200 dark:shadow-blue-900/50">
           <BookOpen size={24} />
         </div>
         {isOpen && (
           <div className="animate-in fade-in duration-300">
-            <h1 className="font-bold text-xl tracking-tight text-blue-900">EduAssist</h1>
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Pro Edition</p>
+            <h1 className="font-bold text-xl tracking-tight text-blue-900 dark:text-blue-100">EduAssist</h1>
+            <p className="text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Pro Edition</p>
           </div>
         )}
       </div>
@@ -54,11 +54,11 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
               href={item.href} 
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 whitespace-nowrap group
                 ${isActive 
-                  ? 'bg-blue-50 text-blue-700 font-medium shadow-sm' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium shadow-sm' 
+                  : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
-              <item.icon size={20} className={`shrink-0 transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}`} />
+              <item.icon size={20} className={`shrink-0 transition-colors ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-slate-500 group-hover:text-gray-600 dark:group-hover:text-slate-300'}`} />
               
               {isOpen && <span className="animate-in fade-in slide-in-from-left-2 duration-300">{item.label}</span>}
               
@@ -71,33 +71,33 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
       </nav>
 
       {/* User / Auth Section */}
-      <div className="p-4 border-t border-gray-100 pb-8 mb-2">
+      <div className="p-4 border-t border-gray-100 dark:border-slate-700 pb-8 mb-2">
         {config.userProfile ? (
           /* LOGGED IN STATE */
           <div className={`flex flex-col gap-2 ${!isOpen && 'items-center'}`}>
-            <div className={`flex items-center gap-3 p-2 rounded-xl bg-gray-50 border border-gray-100 transition-all ${!isOpen ? 'justify-center p-3' : ''}`}>
+            <div className={`flex items-center gap-3 p-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 transition-all ${!isOpen ? 'justify-center p-3' : ''}`}>
               {(config.userProfile as any).picture ? (
                  // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={(config.userProfile as any).picture} 
                   alt="Profile" 
-                  className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                  className="w-8 h-8 rounded-full border border-gray-200 dark:border-slate-600 shadow-sm"
                 />
               ) : (
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-1.5 rounded-full text-blue-700">
+                <div className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-900 p-1.5 rounded-full text-blue-700 dark:text-blue-300">
                   <User size={18} />
                 </div>
               )}
               {isOpen && (
                 <div className="flex-1 min-w-0 overflow-hidden">
-                  <p className="text-sm font-bold text-gray-800 truncate">{config.userProfile.name}</p>
-                  <p className="text-xs text-gray-500 truncate">Developer</p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-white truncate">{config.userProfile.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 truncate">Developer</p>
                 </div>
               )}
             </div>
             <button
               onClick={handleSignOut}
-              className={`flex items-center gap-2 text-xs font-medium text-red-500 hover:text-red-600 hover:bg-red-50 p-2.5 rounded-lg transition-colors w-full ${!isOpen ? 'justify-center' : ''}`}
+              className={`flex items-center gap-2 text-xs font-medium text-red-500 dark:text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 p-2.5 rounded-lg transition-colors w-full ${!isOpen ? 'justify-center' : ''}`}
             >
               <LogOut size={16} />
               {isOpen && <span>Sign Out</span>}
@@ -108,7 +108,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
           <button
             onClick={handleAuthClick}
             className={`
-              relative group w-full flex items-center gap-3 rounded-xl transition-all duration-300
+              relative group w-full flex items-center gap-3 rounded-xl transition-all duration-300 overflow-hidden
               ${isOpen 
                 ? 'px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-600/40 hover:-translate-y-0.5' 
                 : 'justify-center p-3 bg-blue-600 text-white shadow-md hover:bg-blue-700'

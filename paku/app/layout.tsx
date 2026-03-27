@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css"; // Ensure this exists (standard Next.js)
 import { GoogleProvider } from "@/context/GoogleContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { GlobalStyles } from "@/components/GlobalStyles";
 import ClientLayout from "@/components/ClientLayout"; // We need this to handle client-side sidebar state
 
@@ -18,11 +19,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-slate-50 text-gray-800`}>
         <GoogleProvider>
-          <GlobalStyles />
-          <ClientLayout>{children}</ClientLayout>
+          <ThemeProvider>
+            <GlobalStyles />
+            <ClientLayout>{children}</ClientLayout>
+          </ThemeProvider>
         </GoogleProvider>
       </body>
     </html>
