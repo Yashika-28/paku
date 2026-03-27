@@ -11,11 +11,16 @@ import {
 // Import the Google Context (Same as your CalendarPage)
 import { useGoogle } from '@/context/GoogleContext';
 import SkyBanner from '@/components/SkyBanner';
+import { Cityscape } from '@/components/Cityscape';
 
 // --- UI Components ---
 const Card = ({ children, className = "", onClick }: any) => (
-  <div onClick={onClick} className={`bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-sm transition-all duration-300 card-hover-lift ${className}`}>
-    {children}
+  <div 
+    onClick={onClick} 
+    className={`relative bg-white/5 dark:bg-slate-900/5 backdrop-blur-md rounded-[2.5rem] border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] transition-all duration-500 hover:shadow-[0_15px_40px_0_rgba(31,38,135,0.15)] hover:-translate-y-2 overflow-hidden overflow-visible-card z-10 ${className}`}
+  >
+    <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/10 dark:from-white/5 to-transparent rounded-[2.5rem] pointer-events-none" />
+    <div className="relative z-10 w-full h-full">{children}</div>
   </div>
 );
 
@@ -60,7 +65,7 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
         &quot;{displayedText}&quot;
         {isTyping && <span className="animate-pulse inline-block w-1.5 h-4 ml-1 bg-indigo-200 align-middle"></span>}
       </p>
-      
+
       <div className={`mt-3 transition-opacity duration-1000 ${!isTyping ? 'opacity-100' : 'opacity-0'}`}>
         <p className="text-sm font-bold opacity-60 uppercase tracking-widest text-indigo-200">
           — {author}
@@ -71,58 +76,10 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
 };
 
 // --- New Widgets ---
-const FocusTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [isActive, setIsActive] = useState(false);
 
-  useEffect(() => {
-    let interval: any = null;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
-    } else if (timeLeft === 0) {
-      setIsActive(false);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
-
-  const toggle = () => setIsActive(!isActive);
-  const reset = () => { setIsActive(false); setTimeLeft(25 * 60); };
-
-  const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-  const secs = (timeLeft % 60).toString().padStart(2, '0');
-  const progress = ((25 * 60 - timeLeft) / (25 * 60)) * 100;
-
-  return (
-    <Card className="p-6 relative overflow-hidden group">
-      <div className="flex justify-between items-center mb-4 relative z-10">
-        <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
-          <Clock size={18} className="text-rose-500" /> Focus Timer
-        </h3>
-        <button onClick={reset} className="text-gray-400 hover:text-gray-700 transition active:scale-95">
-          <RefreshCw size={14} />
-        </button>
-      </div>
-      
-      <div className="flex flex-col items-center justify-center relative z-10">
-        <div className="relative w-32 h-32 flex items-center justify-center mb-4">
-          <svg className="w-full h-full transform -rotate-90 absolute inset-0 drop-shadow-sm">
-            <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-100 dark:text-slate-700/50" />
-            <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="364.4" strokeDashoffset={364.4 - (364.4 * progress) / 100} className="text-rose-500 transition-all duration-1000 ease-linear drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]" strokeLinecap="round" />
-          </svg>
-          <div className="bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 absolute inset-2 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.1),_0_2px_10px_rgba(0,0,0,0.1)] flex items-center justify-center">
-            <span className="text-3xl font-extrabold tracking-tighter text-gray-800 dark:text-white tabular-nums drop-shadow-sm">{mins}:{secs}</span>
-          </div>
-        </div>
-        
-        <Button onClick={toggle} className="w-full bg-gradient-to-b from-rose-400 to-rose-600 text-white border border-rose-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),_0_3px_5px_rgba(0,0,0,0.2)] active:shadow-[inset_0_3px_5px_rgba(0,0,0,0.4)]">
-          {isActive ? 'Pause Session' : 'Start Focus'}
-        </Button>
-      </div>
-    </Card>
-  );
-};
-
-const TodoList = () => {
+const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
+  const [activeTab, setActiveTab] = useState<'agenda'|'tasks'>('agenda');
+  
   const [todos, setTodos] = useState([
     { id: 1, text: "Grade Python midterms", done: false },
     { id: 2, text: "Email TAs about lab setup", done: true },
@@ -138,43 +95,80 @@ const TodoList = () => {
   };
 
   const toggleTodo = (id: number) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    setTodos(todos.map((t: any) => t.id === id ? { ...t, done: !t.done } : t));
   };
 
   return (
-    <Card className="p-5">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
-          <CheckCircle size={18} className="text-indigo-500" /> Tasks
-        </h3>
-        <span className="text-xs font-bold text-gray-400 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded-full shadow-inner">{todos.filter(t => t.done).length}/{todos.length}</span>
-      </div>
-      
-      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin">
-        {todos.map(todo => (
-          <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all ${todo.done ? 'opacity-60 bg-transparent' : 'hover:bg-gray-50 dark:hover:bg-slate-700/30'}`}>
-            <div className={`w-5 h-5 rounded-md flex-shrink-0 border-2 flex items-center justify-center transition-all ${todo.done ? 'bg-indigo-500 border-indigo-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]' : 'bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 border-gray-300 dark:border-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_2px_4px_rgba(0,0,0,0.1)]'}`}>
-              {todo.done && <CheckCircle size={12} className="text-white drop-shadow-sm" />}
-            </div>
-            <p className={`text-sm font-medium transition-all ${todo.done ? 'line-through text-gray-500 dark:text-slate-400' : 'text-gray-700 dark:text-slate-200'}`}>
-              {todo.text}
-            </p>
-          </div>
-        ))}
-      </div>
-      
-      <form onSubmit={addTask} className="mt-3 relative">
-        <input 
-          type="text" 
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Add new task..." 
-          className="w-full bg-gray-100/50 dark:bg-slate-800/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] rounded-lg pl-3 pr-10 py-2.5 text-sm outline-none border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 transition-all text-gray-800 dark:text-white placeholder:text-gray-400"
-        />
-        <button type="submit" className="absolute right-1.5 top-1.5 p-1.5 bg-gradient-to-b from-indigo-400 to-indigo-600 rounded-md text-white border border-indigo-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),_0_2px_4px_rgba(0,0,0,0.1)] active:scale-95 transition-all">
-          <Plus size={14} />
+    <Card className="p-0 animate-slide-in-right delay-300 overflow-hidden flex flex-col h-[300px]">
+      <div className="flex border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+        <button onClick={() => setActiveTab('agenda')} className={`flex-1 py-3.5 text-sm font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'agenda' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 bg-white dark:bg-slate-800' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
+          <CalendarIcon size={16} /> Agenda
+          <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">{calendarEvents.length}</span>
         </button>
-      </form>
+        <button onClick={() => setActiveTab('tasks')} className={`flex-1 py-3.5 text-sm font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'tasks' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 bg-white dark:bg-slate-800' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
+          <CheckCircle size={16} /> Tasks
+          <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">{todos.filter((t: any) => !t.done).length}</span>
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-5 scrollbar-thin">
+        {activeTab === 'agenda' ? (
+          <div className="space-y-3">
+            {!isConnected ? (
+              <div className="text-center py-8 flex flex-col items-center gap-2 text-gray-400 dark:text-slate-500">
+                <CloudRain size={32} className="opacity-50" />
+                <span className="text-sm">Calendar not connected</span>
+              </div>
+            ) : loading ? (
+              <div className="flex justify-center py-8"><RefreshCw className="animate-spin text-gray-300 dark:text-slate-600" /></div>
+            ) : calendarEvents.length > 0 ? (
+              calendarEvents.map((ev: any) => (
+                <div key={ev.id} className="group flex gap-3 items-start p-3 rounded-xl border border-gray-100 dark:border-slate-700/50 hover:bg-blue-50/50 dark:hover:bg-slate-700/50 hover:border-blue-200 dark:hover:border-blue-800 transition-all cursor-pointer" onClick={() => window.open(ev.link, '_blank')}>
+                  <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${ev.urgent ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]'}`}></div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-bold ${ev.urgent ? 'text-red-600 dark:text-red-400' : 'text-gray-800 dark:text-slate-200'} truncate`}>{ev.title}</p>
+                    <p className="text-xs font-medium text-gray-400 dark:text-slate-500 mt-0.5 flex items-center gap-1"><Clock size={10} /> {ev.time} • {ev.type}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-10 text-gray-400 dark:text-slate-500 flex flex-col items-center">
+                <Sun size={32} className="mb-3 text-amber-400 opacity-60" />
+                <p className="font-medium text-gray-600 dark:text-slate-400">Clear Schedule</p>
+                <p className="text-xs mt-1">No events scheduled for today.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col h-full">
+            <div className="space-y-2 flex-1 overflow-y-auto pr-1 pb-4">
+              {todos.map((todo: any) => (
+                <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${todo.done ? 'opacity-60 bg-transparent border-transparent' : 'bg-white dark:bg-slate-800/50 border-gray-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800 shadow-sm'}`}>
+                  <div className={`w-5 h-5 rounded-md flex-shrink-0 border-2 flex items-center justify-center transition-all ${todo.done ? 'bg-indigo-500 border-indigo-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]' : 'bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 border-gray-300 dark:border-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_2px_4px_rgba(0,0,0,0.1)]'}`}>
+                    {todo.done && <CheckCircle size={12} className="text-white drop-shadow-sm" />}
+                  </div>
+                  <p className={`text-sm font-medium transition-all ${todo.done ? 'line-through text-gray-500 dark:text-slate-400' : 'text-gray-700 dark:text-slate-200'}`}>
+                    {todo.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+            
+            <form onSubmit={addTask} className="mt-auto relative pt-3 border-t border-gray-100 dark:border-slate-700/50">
+              <input
+                type="text"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="Add new task..."
+                className="w-full bg-gray-50 dark:bg-slate-800 rounded-xl pl-4 pr-11 py-3 text-sm outline-none border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner text-gray-800 dark:text-white placeholder:text-gray-400"
+              />
+              <button type="submit" className="absolute right-2 top-[18px] p-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white shadow-sm active:scale-95 transition-all">
+                <Plus size={16} />
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </Card>
   );
 };
@@ -191,7 +185,7 @@ const DeadlinesList = () => {
     ]);
   }, []);
 
-  if(!deadlines.length) return null;
+  if (!deadlines.length) return null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -418,7 +412,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`min-h-screen transition-all duration-1000 ease-in-out font-sans text-gray-800 dark:text-slate-200 ${themeClass}`}>
+    <div className={`relative min-h-screen transition-all duration-1000 ease-in-out font-sans text-gray-800 dark:text-slate-200 ${themeClass}`}>
 
       {/* --- Hero: Full-bleed Sky Background + Greeting Overlay --- */}
       <div className="relative">
@@ -447,7 +441,8 @@ export default function Dashboard() {
       </div>
 
       {/* --- Main Content (padded, max-width) --- */}
-      <div className="max-w-7xl mx-auto px-8 py-6">
+      <Cityscape />
+      <div className="max-w-7xl mx-auto px-8 py-10 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           {/* --- Left Column (Main Content) --- */}
@@ -562,11 +557,6 @@ export default function Dashboard() {
           {/* --- Right Column (Widgets) --- */}
           <div className="space-y-6">
 
-            {/* Focus Timer */}
-            <div className="animate-slide-in-right delay-100">
-              <FocusTimer />
-            </div>
-
             {/* Weather Widget */}
             <Card className="p-6 relative overflow-hidden text-gray-800 dark:text-slate-200 animate-slide-in-right delay-200">
               {weatherLoading ? (
@@ -618,45 +608,11 @@ export default function Dashboard() {
                 <div className="flex items-center justify-center py-6 text-gray-400 dark:text-slate-500 gap-2">Weather unavailable</div>
               )}
             </Card>
-
-            {/* Calendar Agenda Widget */}
-            <Card className="p-5 animate-slide-in-right delay-300">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2"><CalendarIcon size={18} className="text-blue-500" /> Today&apos;s Agenda</h3>
-                <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">{calendarEvents.length} Events</span>
-              </div>
-
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
-                {!isConnected ? (
-                  <div className="text-center py-8 flex flex-col items-center gap-2 text-gray-400 dark:text-slate-500">
-                    <CloudRain size={32} className="opacity-50" />
-                    <span className="text-xs">Calendar not connected</span>
-                  </div>
-                ) : calendarLoading ? (
-                  <div className="flex justify-center py-8"><RefreshCw className="animate-spin text-gray-300 dark:text-slate-600" /></div>
-                ) : calendarEvents.length > 0 ? (
-                  calendarEvents.map(ev => (
-                    <div key={ev.id} className="group flex gap-3 items-start p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer" onClick={() => window.open(ev.link, '_blank')}>
-                      <div className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${ev.urgent ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'bg-blue-400'}`}></div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium ${ev.urgent ? 'text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-slate-200'} truncate`}>{ev.title}</p>
-                        <p className="text-xs text-gray-400 dark:text-slate-500">{ev.time} • {ev.type}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-400 dark:text-slate-500 text-xs">
-                    <Sun size={24} className="mx-auto mb-2 text-amber-400 opacity-50" />
-                    No events scheduled for today.
-                  </div>
-                )}
-              </div>
-            </Card>
-
-            {/* Interactive To-Do List */}
-            <div className="animate-slide-in-right delay-350">
-              <TodoList />
+            {/* Agenda & Tasks Widget */}
+            <div className="animate-slide-in-right delay-300">
+              <AgendaAndTasks calendarEvents={calendarEvents} isConnected={isConnected} loading={calendarLoading} />
             </div>
+
 
             {/* News Widget */}
             <Card className="p-5 animate-slide-in-right delay-400">
