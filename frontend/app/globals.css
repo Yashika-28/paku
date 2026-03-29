@@ -44,13 +44,31 @@ body {
 
 /* --- Pulsing Glow Rings on Sun --- */
 @keyframes skyPulse {
-  0%, 100% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.25); opacity: 0.15; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: scale(1.25);
+    opacity: 0.15;
+  }
 }
 
 @keyframes skyPulseDelayed {
-  0%, 100% { transform: scale(1); opacity: 0.25; }
-  50% { transform: scale(1.4); opacity: 0.05; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.25;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 0.05;
+  }
 }
 
 .sky-pulse {
@@ -63,8 +81,15 @@ body {
 
 /* --- Moon Float --- */
 @keyframes skyFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .sky-float {
@@ -73,14 +98,36 @@ body {
 
 /* --- Star Twinkle --- */
 @keyframes skyTwinkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.2; transform: scale(0.6); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.2;
+    transform: scale(0.6);
+  }
 }
 
 @keyframes skyTwinkleDelayed {
-  0%, 100% { opacity: 0.7; transform: scale(1); }
-  40% { opacity: 0.1; transform: scale(0.5); }
-  80% { opacity: 0.9; transform: scale(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  40% {
+    opacity: 0.1;
+    transform: scale(0.5);
+  }
+
+  80% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
 }
 
 .sky-twinkle {
@@ -93,10 +140,27 @@ body {
 
 /* --- Star Cross Sparkle --- */
 @keyframes skySparkle {
-  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
-  25% { transform: scale(1.5) rotate(45deg); opacity: 1; }
-  50% { transform: scale(0.5) rotate(90deg); opacity: 0.3; }
-  75% { transform: scale(1.2) rotate(135deg); opacity: 0.9; }
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+
+  25% {
+    transform: scale(1.5) rotate(45deg);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.5) rotate(90deg);
+    opacity: 0.3;
+  }
+
+  75% {
+    transform: scale(1.2) rotate(135deg);
+    opacity: 0.9;
+  }
 }
 
 .sky-sparkle {
@@ -106,13 +170,23 @@ body {
 
 /* --- Cloud Drift --- */
 @keyframes skyCloudDrift {
-  0% { transform: translateX(-120%); }
-  100% { transform: translateX(calc(100vw + 120%)); }
+  0% {
+    transform: translateX(-120%);
+  }
+
+  100% {
+    transform: translateX(calc(100vw + 120%));
+  }
 }
 
 @keyframes skyCloudDriftReverse {
-  0% { transform: translateX(calc(100vw + 120%)); }
-  100% { transform: translateX(-120%); }
+  0% {
+    transform: translateX(calc(100vw + 120%));
+  }
+
+  100% {
+    transform: translateX(-120%);
+  }
 }
 
 .sky-cloud-drift {
@@ -129,9 +203,19 @@ body {
 
 /* --- Rain --- */
 @keyframes skyRain {
-  0% { transform: translateY(-20px); opacity: 0; }
-  20% { opacity: 0.8; }
-  100% { transform: translateY(250px); opacity: 0; }
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(250px);
+    opacity: 0;
+  }
 }
 
 .sky-rain {
@@ -140,9 +224,22 @@ body {
 
 /* --- Lightning Flash --- */
 @keyframes skyLightning {
-  0%, 92%, 94%, 96%, 100% { background: transparent; }
-  93% { background: rgba(255, 255, 255, 0.3); }
-  95% { background: rgba(255, 255, 255, 0.15); }
+
+  0%,
+  92%,
+  94%,
+  96%,
+  100% {
+    background: transparent;
+  }
+
+  93% {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  95% {
+    background: rgba(255, 255, 255, 0.15);
+  }
 }
 
 .sky-lightning {
@@ -159,6 +256,7 @@ body {
     opacity: 0;
     transform: translateY(24px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -170,6 +268,7 @@ body {
     opacity: 0;
     transform: scale(0.92);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -181,6 +280,7 @@ body {
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -192,6 +292,7 @@ body {
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -204,6 +305,7 @@ body {
     filter: blur(8px);
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     filter: blur(0);
@@ -232,14 +334,37 @@ body {
 }
 
 /* Stagger delay utility classes */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-.delay-600 { animation-delay: 600ms; }
-.delay-700 { animation-delay: 700ms; }
-.delay-800 { animation-delay: 800ms; }
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.delay-600 {
+  animation-delay: 600ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
+}
+
+.delay-800 {
+  animation-delay: 800ms;
+}
 
 /* ==============================================
    CARD MICRO-INTERACTIONS
@@ -248,7 +373,7 @@ body {
 /* Smooth card hover lift */
 .card-hover-lift {
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-hover-lift:hover {
@@ -262,8 +387,15 @@ body {
 
 /* Pulse attention for urgent items */
 @keyframes attentionPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
 }
 
 .pulse-attention {
@@ -272,8 +404,15 @@ body {
 
 /* Number counter animation */
 @keyframes countUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-count-up {
@@ -282,20 +421,32 @@ body {
 
 /* Gentle background shimmer for loading states */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .shimmer {
-  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  background: linear-gradient(90deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }
 
 /* Quote card subtle breathing glow */
 @keyframes breathingGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.05); }
-  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.15); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.05);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+  }
 }
 
 .breathing-glow {
@@ -311,15 +462,18 @@ body {
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
+
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 99px;
 }
+
 .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .scrollbar-hide::-webkit-scrollbar {

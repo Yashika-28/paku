@@ -15,8 +15,8 @@ import { Cityscape } from '@/components/Cityscape';
 
 // --- UI Components ---
 const Card = ({ children, className = "", onClick }: any) => (
-  <div 
-    onClick={onClick} 
+  <div
+    onClick={onClick}
     className={`relative bg-white/5 dark:bg-slate-900/5 backdrop-blur-md rounded-[2.5rem] border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] transition-all duration-500 hover:shadow-[0_15px_40px_0_rgba(31,38,135,0.15)] hover:-translate-y-2 overflow-hidden overflow-visible-card z-10 ${className}`}
   >
     <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/10 dark:from-white/5 to-transparent rounded-[2.5rem] pointer-events-none" />
@@ -78,8 +78,8 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
 // --- New Widgets ---
 
 const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
-  const [activeTab, setActiveTab] = useState<'agenda'|'tasks'>('agenda');
-  
+  const [activeTab, setActiveTab] = useState<'agenda' | 'tasks'>('agenda');
+
   const [todos, setTodos] = useState([
     { id: 1, text: "Grade Python midterms", done: false },
     { id: 2, text: "Email TAs about lab setup", done: true },
@@ -99,8 +99,9 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
   };
 
   return (
-    <Card className="p-0 animate-slide-in-right delay-300 overflow-hidden flex flex-col h-[300px]">
-      <div className="flex border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50">
+    <Card className="p-0 animate-slide-in-right delay-300 overflow-hidden flex flex-col h-[380px]">
+      {/* Tab Header - fixed */}
+      <div className="flex border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 flex-shrink-0">
         <button onClick={() => setActiveTab('agenda')} className={`flex-1 py-3.5 text-sm font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'agenda' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 bg-white dark:bg-slate-800' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
           <CalendarIcon size={16} /> Agenda
           <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">{calendarEvents.length}</span>
@@ -111,8 +112,9 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 scrollbar-thin">
-        {activeTab === 'agenda' ? (
+      {/* Content Area */}
+      {activeTab === 'agenda' ? (
+        <div className="flex-1 overflow-y-auto p-5 scrollbar-thin">
           <div className="space-y-3">
             {!isConnected ? (
               <div className="text-center py-8 flex flex-col items-center gap-2 text-gray-400 dark:text-slate-500">
@@ -139,9 +141,12 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
               </div>
             )}
           </div>
-        ) : (
-          <div className="flex flex-col h-full">
-            <div className="space-y-2 flex-1 overflow-y-auto pr-1 pb-4">
+        </div>
+      ) : (
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Scrollable task list */}
+          <div className="flex-1 overflow-y-auto p-5 pb-2 scrollbar-visible">
+            <div className="space-y-2">
               {todos.map((todo: any) => (
                 <div key={todo.id} onClick={() => toggleTodo(todo.id)} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${todo.done ? 'opacity-60 bg-transparent border-transparent' : 'bg-white dark:bg-slate-800/50 border-gray-100 dark:border-slate-700 hover:border-indigo-200 dark:hover:border-indigo-800 shadow-sm'}`}>
                   <div className={`w-5 h-5 rounded-md flex-shrink-0 border-2 flex items-center justify-center transition-all ${todo.done ? 'bg-indigo-500 border-indigo-600 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]' : 'bg-gradient-to-b from-gray-50 to-gray-200 dark:from-slate-700 dark:to-slate-800 border-gray-300 dark:border-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),_0_2px_4px_rgba(0,0,0,0.1)]'}`}>
@@ -153,22 +158,23 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
                 </div>
               ))}
             </div>
-            
-            <form onSubmit={addTask} className="mt-auto relative pt-3 border-t border-gray-100 dark:border-slate-700/50">
-              <input
-                type="text"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Add new task..."
-                className="w-full bg-gray-50 dark:bg-slate-800 rounded-xl pl-4 pr-11 py-3 text-sm outline-none border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner text-gray-800 dark:text-white placeholder:text-gray-400"
-              />
-              <button type="submit" className="absolute right-2 top-[18px] p-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white shadow-sm active:scale-95 transition-all">
-                <Plus size={16} />
-              </button>
-            </form>
           </div>
-        )}
-      </div>
+
+          {/* Pinned add-task form at bottom */}
+          <form onSubmit={addTask} className="relative px-5 py-3 border-t border-gray-100 dark:border-slate-700/50 flex-shrink-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+            <input
+              type="text"
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              placeholder="Add new task..."
+              className="w-full bg-gray-50 dark:bg-slate-800 rounded-xl pl-4 pr-11 py-3 text-sm outline-none border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-inner text-gray-800 dark:text-white placeholder:text-gray-400"
+            />
+            <button type="submit" className="absolute right-7 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white shadow-sm active:scale-95 transition-all">
+              <Plus size={16} />
+            </button>
+          </form>
+        </div>
+      )}
     </Card>
   );
 };
@@ -349,12 +355,49 @@ const CLASSES = [
 
 const NEWS_CATEGORIES = ["Technology", "AI", "Science", "Education"];
 
+// Isolated News Widget to prevent full page re-renders when switching categories
+const LatestUpdatesWidget = () => {
+  const [activeCategory, setActiveCategory] = useState("Technology");
+  const { news, loading: newsLoading } = useNews(activeCategory);
+
+  return (
+    <Card className="p-5 animate-slide-in-right delay-400">
+      <div className="flex flex-col gap-3 mb-4">
+        <div className="flex justify-between items-center">
+          <h3 className="font-bold text-gray-800 dark:text-white">Latest Updates</h3>
+          <RefreshCw size={14} className={`text-gray-400 dark:text-slate-500 cursor-pointer ${newsLoading ? 'animate-spin' : ''}`} />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {NEWS_CATEGORIES.map(cat => (
+            <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${activeCategory === cat ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-600'}`}>
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {newsLoading ? (
+          <div className="text-center py-8 text-gray-400 dark:text-slate-500 text-xs">Fetching updates...</div>
+        ) : (
+          news.map((item, idx) => (
+            <a key={idx} href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 leading-snug mb-1 line-clamp-2">{item.title}</h4>
+              <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-slate-500"><span>{item.source}</span><span>{new Date(item.pubDate).toLocaleDateString()}</span></div>
+              {idx < news.length - 1 && <div className="h-px bg-gray-50 dark:bg-slate-700 mt-3" />}
+            </a>
+          ))
+        )}
+      </div>
+    </Card>
+  );
+};
+
 export default function Dashboard() {
   const { themeClass, textColor } = useTimeTheme();
   const location = useLocation();
   const { weather, loading: weatherLoading } = useWeather(location.lat, location.long);
-  const [activeCategory, setActiveCategory] = useState("Technology");
-  const { news, loading: newsLoading } = useNews(activeCategory);
+
   const quote = useQuote();
   const { events: calendarEvents, loading: calendarLoading, isConnected } = useCalendarAgenda();
 
@@ -615,35 +658,7 @@ export default function Dashboard() {
 
 
             {/* News Widget */}
-            <Card className="p-5 animate-slide-in-right delay-400">
-              <div className="flex flex-col gap-3 mb-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-gray-800 dark:text-white">Latest Updates</h3>
-                  <RefreshCw size={14} className={`text-gray-400 dark:text-slate-500 cursor-pointer ${newsLoading ? 'animate-spin' : ''}`} />
-                </div>
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {NEWS_CATEGORIES.map(cat => (
-                    <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${activeCategory === cat ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-600'}`}>
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {newsLoading ? (
-                  <div className="text-center py-8 text-gray-400 dark:text-slate-500 text-xs">Fetching updates...</div>
-                ) : (
-                  news.map((item, idx) => (
-                    <a key={idx} href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 leading-snug mb-1 line-clamp-2">{item.title}</h4>
-                      <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-slate-500"><span>{item.source}</span><span>{new Date(item.pubDate).toLocaleDateString()}</span></div>
-                      {idx < news.length - 1 && <div className="h-px bg-gray-50 dark:bg-slate-700 mt-3" />}
-                    </a>
-                  ))
-                )}
-              </div>
-            </Card>
+            <LatestUpdatesWidget />
 
           </div>
         </div>

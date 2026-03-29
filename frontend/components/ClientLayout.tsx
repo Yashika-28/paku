@@ -30,7 +30,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <div className="min-h-screen flex dark:bg-slate-950 transition-colors duration-300">
       <Sidebar isOpen={isSidebarOpen} />
       <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-8 sticky top-0 z-10 transition-colors duration-300">
+        <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-8 sticky top-0 z-40 transition-colors duration-300">
           <div className="flex items-center gap-4">
              <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg text-gray-500 dark:text-slate-400 transition-colors">
                {isSidebarOpen ? <X size={20}/> : <LayoutDashboard size={20}/>}
