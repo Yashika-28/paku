@@ -11,7 +11,8 @@ import {
   Calendar as CalendarIcon,
   User,
   LogOut,
-  Plus
+  Plus,
+  Volume2
 } from 'lucide-react';
 import { useGoogle } from '@/context/GoogleContext';
 
@@ -25,6 +26,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
     { href: '/assignments', label: 'Assignment Checker', icon: BookOpen },
     { href: '/labs', label: 'Lab Manuals', icon: FlaskConical },
     { href: '/meeting', label: 'Meeting Assistant', icon: Video },
+    { href: '/voice-test', label: 'Voice Streaming Test', icon: Volume2 },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
 

@@ -12,14 +12,18 @@ import {
 import { useGoogle } from '@/context/GoogleContext';
 import SkyBanner from '@/components/SkyBanner';
 import { Cityscape } from '@/components/Cityscape';
+import { useTimeTheme } from '@/hooks/useTimeTheme';
 
 // --- UI Components ---
-const Card = ({ children, className = "", onClick }: any) => (
+const Card = ({ children, className = "", onClick, theme }: any) => (
   <div
     onClick={onClick}
-    className={`relative bg-white/5 dark:bg-slate-900/5 backdrop-blur-md rounded-[2.5rem] border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] transition-all duration-500 hover:shadow-[0_15px_40px_0_rgba(31,38,135,0.15)] hover:-translate-y-2 overflow-hidden overflow-visible-card z-10 ${className}`}
+    className={`relative ${theme?.cardBg || 'bg-white/15 dark:bg-slate-900/60'} backdrop-blur-2xl rounded-[2.5rem] border ${theme?.cardBorder || 'border-white/30 dark:border-white/10'} shadow-[0_12px_40px_rgba(0,0,0,0.2)] transition-all duration-500 hover:shadow-[0_24px_60px_rgba(0,0,0,0.3)] hover:-translate-y-2 overflow-hidden z-10 ${className}`}
   >
-    <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/10 dark:from-white/5 to-transparent rounded-[2.5rem] pointer-events-none" />
+    {/* Opaque Corner Accents - Premium Glassmorphism */}
+    <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle at 0% 0%, white 0%, transparent 25%), radial-gradient(circle at 100% 0%, white 0%, transparent 25%), radial-gradient(circle at 0% 100%, white 0%, transparent 25%), radial-gradient(circle at 100% 100%, white 0%, transparent 25%)' }} />
+    
+    <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/20 dark:from-white/10 to-transparent rounded-[2.5rem] pointer-events-none" />
     <div className="relative z-10 w-full h-full">{children}</div>
   </div>
 );
@@ -40,7 +44,7 @@ const Button = ({ children, onClick, variant = "primary", className = "", icon: 
   );
 };
 
-const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
+const ChatbotQuote = ({ quote, author, theme }: { quote: string, author: string, theme: any }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -61,13 +65,13 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
 
   return (
     <div translate="no" spellCheck="false" data-gramm="false">
-      <p className="text-lg font-medium italic leading-relaxed text-indigo-50">
+      <p className={`text-lg font-medium italic leading-relaxed ${theme.isDark ? 'text-indigo-50' : 'text-slate-800'}`}>
         &quot;{displayedText}&quot;
-        {isTyping && <span className="animate-pulse inline-block w-1.5 h-4 ml-1 bg-indigo-200 align-middle"></span>}
+        {isTyping && <span className={`animate-pulse inline-block w-1.5 h-4 ml-1 ${theme.isDark ? 'bg-indigo-200' : 'bg-slate-400'} align-middle`}></span>}
       </p>
 
       <div className={`mt-3 transition-opacity duration-1000 ${!isTyping ? 'opacity-100' : 'opacity-0'}`}>
-        <p className="text-sm font-bold opacity-60 uppercase tracking-widest text-indigo-200">
+        <p className={`text-sm font-bold opacity-60 uppercase tracking-widest ${theme.isDark ? 'text-indigo-200' : 'text-slate-600'}`}>
           — {author}
         </p>
       </div>
@@ -77,7 +81,7 @@ const ChatbotQuote = ({ quote, author }: { quote: string, author: string }) => {
 
 // --- New Widgets ---
 
-const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
+const AgendaAndTasks = ({ theme, calendarEvents, isConnected, loading }: any) => {
   const [activeTab, setActiveTab] = useState<'agenda' | 'tasks'>('agenda');
 
   const [todos, setTodos] = useState([
@@ -98,17 +102,35 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
     setTodos(todos.map((t: any) => t.id === id ? { ...t, done: !t.done } : t));
   };
 
+  const isDark = theme?.isDark;
+  const textColor = theme?.textColor || 'text-slate-800';
+  const cardBorder = theme?.cardBorder || 'border-gray-100';
+
   return (
-    <Card className="p-0 animate-slide-in-right delay-300 overflow-hidden flex flex-col h-[380px]">
+    <Card theme={theme} className="p-0 animate-slide-in-right delay-300 overflow-hidden flex flex-col h-[380px]">
       {/* Tab Header - fixed */}
-      <div className="flex border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 flex-shrink-0">
-        <button onClick={() => setActiveTab('agenda')} className={`flex-1 py-3.5 text-sm font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'agenda' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 bg-white dark:bg-slate-800' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
+      <div className={`flex border-b ${cardBorder} ${isDark ? 'bg-slate-800/60' : 'bg-white/40'} backdrop-blur-md flex-shrink-0`}>
+        <button 
+          onClick={() => setActiveTab('agenda')} 
+          className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'agenda' 
+              ? `${theme?.titleColor} border-b-2 bg-white/60 dark:bg-slate-700/80 shadow-inner` 
+              : `${theme?.titleColor} opacity-70 hover:opacity-100 hover:bg-white/30 dark:hover:bg-slate-700/40`
+          }`}
+        >
           <CalendarIcon size={16} /> Agenda
-          <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400">{calendarEvents.length}</span>
+          <span className={`text-[10px] ml-1 px-2 py-0.5 rounded-full ${isDark ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'} shadow-sm`}>{calendarEvents.length}</span>
         </button>
-        <button onClick={() => setActiveTab('tasks')} className={`flex-1 py-3.5 text-sm font-bold flex items-center justify-center gap-2 transition-all ${activeTab === 'tasks' ? 'text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500 bg-white dark:bg-slate-800' : 'text-gray-500 hover:text-gray-700 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700'}`}>
+        <button 
+          onClick={() => setActiveTab('tasks')} 
+          className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+            activeTab === 'tasks' 
+              ? `${theme?.titleColor} border-b-2 bg-white/60 dark:bg-slate-700/80 shadow-inner` 
+              : `${theme?.titleColor} opacity-70 hover:opacity-100 hover:bg-white/30 dark:hover:bg-slate-700/40`
+          }`}
+        >
           <CheckCircle size={16} /> Tasks
-          <span className="text-[10px] ml-1 px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400">{todos.filter((t: any) => !t.done).length}</span>
+          <span className={`text-[10px] ml-1 px-2 py-0.5 rounded-full ${isDark ? 'bg-indigo-900 text-indigo-300' : 'bg-indigo-100 text-indigo-700'} shadow-sm`}>{todos.filter((t: any) => !t.done).length}</span>
         </button>
       </div>
 
@@ -179,7 +201,7 @@ const AgendaAndTasks = ({ calendarEvents, isConnected, loading }: any) => {
   );
 };
 
-const DeadlinesList = () => {
+const DeadlinesList = ({ theme }: { theme: any }) => {
   const [deadlines, setDeadlines] = useState<any[]>([]);
 
   useEffect(() => {
@@ -198,15 +220,15 @@ const DeadlinesList = () => {
       {deadlines.map((dl, i) => {
         const daysLeft = Math.ceil((dl.date.getTime() - Date.now()) / 86400000);
         return (
-          <Card key={dl.id} className={`p-5 !border-t-4 animate-slide-in-up`} style={{ borderTopColor: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#6366f1', animationDelay: `${i * 100}ms` }}>
-            <p className="text-xs uppercase font-extrabold text-gray-500 dark:text-slate-400 mb-1 tracking-wider">{dl.title}</p>
+          <Card theme={theme} key={dl.id} className={`p-5 !border-t-4 animate-slide-in-up`} style={{ borderTopColor: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#6366f1', animationDelay: `${i * 100}ms` }}>
+            <p className={`text-xs uppercase font-extrabold ${theme.isDark ? 'text-slate-400' : 'text-gray-500'} mb-1 tracking-wider`}>{dl.title}</p>
             <div className="flex items-end gap-2">
               <span className="text-4xl font-extrabold tracking-tighter tabular-nums drop-shadow-sm" style={{ color: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#818cf8' }}>{daysLeft}</span>
-              <span className="text-sm font-bold opacity-70 mb-1.5 uppercase">Days</span>
+              <span className={`text-sm font-bold opacity-70 mb-1.5 uppercase ${theme.textColor}`}>Days</span>
             </div>
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest">{dl.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-              <div className="h-1.5 flex-1 mx-3 bg-gray-200 dark:bg-slate-700 shadow-inner rounded-full overflow-hidden">
+              <span className={`text-[11px] font-bold ${theme.isDark ? 'text-slate-500' : 'text-gray-400'} uppercase tracking-widest`}>{dl.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <div className={`h-1.5 flex-1 mx-3 ${theme.isDark ? 'bg-slate-700' : 'bg-gray-200'} shadow-inner rounded-full overflow-hidden`}>
                 <div className="h-full rounded-full shadow-[inset_0_1px_rgba(255,255,255,0.4)]" style={{ backgroundColor: dl.color === 'emerald' ? '#10b981' : dl.color === 'amber' ? '#f59e0b' : '#6366f1', width: `${Math.max(5, 100 - (daysLeft * 5))}%` }} />
               </div>
             </div>
@@ -218,8 +240,6 @@ const DeadlinesList = () => {
 };
 
 // --- API & Logic Hooks ---
-
-import { useTimeTheme } from '@/hooks/useTimeTheme';
 
 // 2. Google Calendar Integration Hook
 const useCalendarAgenda = () => {
@@ -355,16 +375,44 @@ const CLASSES = [
 
 const NEWS_CATEGORIES = ["Technology", "AI", "Science", "Education"];
 
+const INDIAN_STUDENTS = [
+  { id: 1, name: "Aarav Sharma", id_num: "2024CS01", initial: "AS" },
+  { id: 2, name: "Ananya Iyer", id_num: "2024CS02", initial: "AI" },
+  { id: 3, name: "Ishaan Gupta", id_num: "2024CS03", initial: "IG" },
+  { id: 4, name: "Diya Malhotra", id_num: "2024CS04", initial: "DM" },
+  { id: 5, name: "Vikram Sethi", id_num: "2024CS05", initial: "VS" },
+  { id: 6, name: "Saanvi Reddy", id_num: "2024CS06", initial: "SR" },
+  { id: 7, name: "Arjun Mehra", id_num: "2024CS07", initial: "AM" },
+  { id: 8, name: "Kavya Nair", id_num: "2024CS08", initial: "KN" },
+  { id: 9, name: "Rohan Deshmukh", id_num: "2024CS09", initial: "RD" },
+  { id: 10, name: "Myra Saxena", id_num: "2024CS10", initial: "MS" },
+  { id: 11, name: "Kabir Singh", id_num: "2024CS11", initial: "KS" },
+  { id: 12, name: "Zara Khan", id_num: "2024CS12", initial: "ZK" },
+  { id: 13, name: "Devansh Patel", id_num: "2024CS13", initial: "DP" },
+  { id: 14, name: "Isha Joshi", id_num: "2024CS14", initial: "IJ" },
+  { id: 15, name: "Reyansh Kapoor", id_num: "2024CS15", initial: "RK" },
+  { id: 16, name: "Priya Menon", id_num: "2024CS16", initial: "PM" },
+  { id: 17, name: "Dhruv Chaudhary", id_num: "2024CS17", initial: "DC" },
+  { id: 18, name: "Aditi Rao", id_num: "2024CS18", initial: "AR" },
+  { id: 19, name: "Vihaan Agarwal", id_num: "2024CS19", initial: "VA" },
+  { id: 20, name: "Siya Verma", id_num: "2024CS20", initial: "SV" },
+  { id: 21, name: "Aryan Bose", id_num: "2024CS21", initial: "AB" },
+  { id: 22, name: "Meera Bhat", id_num: "2024CS22", initial: "MB" },
+  { id: 23, name: "Krishnan Ram", id_num: "2024CS23", initial: "KR" },
+  { id: 24, name: "Tara Singh", id_num: "2024CS24", initial: "TS" },
+  { id: 25, name: "Yash Trivedi", id_num: "2024CS25", initial: "YT" }
+];
+
 // Isolated News Widget to prevent full page re-renders when switching categories
-const LatestUpdatesWidget = () => {
+const LatestUpdatesWidget = ({ theme }: { theme: any }) => {
   const [activeCategory, setActiveCategory] = useState("Technology");
   const { news, loading: newsLoading } = useNews(activeCategory);
 
   return (
-    <Card className="p-5 animate-slide-in-right delay-400">
+    <Card theme={theme} className="p-5 animate-slide-in-right delay-400">
       <div className="flex flex-col gap-3 mb-4">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-gray-800 dark:text-white">Latest Updates</h3>
+          <h3 className={`font-bold ${theme.isDark ? 'text-white' : 'text-slate-800'}`}>Latest Updates</h3>
           <RefreshCw size={14} className={`text-gray-400 dark:text-slate-500 cursor-pointer ${newsLoading ? 'animate-spin' : ''}`} />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -382,9 +430,9 @@ const LatestUpdatesWidget = () => {
         ) : (
           news.map((item, idx) => (
             <a key={idx} href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 leading-snug mb-1 line-clamp-2">{item.title}</h4>
+              <h4 className={`text-sm font-medium ${theme.isDark ? 'text-slate-200' : 'text-slate-700'} group-hover:text-blue-600 dark:group-hover:text-blue-400 leading-snug mb-1 line-clamp-2`}>{item.title}</h4>
               <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-slate-500"><span>{item.source}</span><span>{new Date(item.pubDate).toLocaleDateString()}</span></div>
-              {idx < news.length - 1 && <div className="h-px bg-gray-50 dark:bg-slate-700 mt-3" />}
+              {idx < news.length - 1 && <div className={`h-px ${theme.isDark ? 'bg-slate-700' : 'bg-gray-100'} mt-3`} />}
             </a>
           ))
         )}
@@ -394,7 +442,8 @@ const LatestUpdatesWidget = () => {
 };
 
 export default function Dashboard() {
-  const { themeClass, textColor } = useTimeTheme();
+  const theme = useTimeTheme();
+  const { pageBg, prevPageBg, isTransitioning, titleColor, textColor, isDark } = theme;
   const location = useLocation();
   const { weather, loading: weatherLoading } = useWeather(location.lat, location.long);
 
@@ -431,6 +480,10 @@ export default function Dashboard() {
     target: "all" // 'all' or 'selected'
   });
 
+  // Students Modal States
+  const [showStudentsModal, setShowStudentsModal] = useState(false);
+  const [selectedClassForStudents, setSelectedClassForStudents] = useState<any>(null);
+
   const getWeatherIcon = (code: number) => {
     if (code <= 1) return <Sun size={32} className="text-amber-500" />;
     return <Cloud size={32} className="text-slate-500 dark:text-slate-400" />;
@@ -455,25 +508,34 @@ export default function Dashboard() {
   };
 
   return (
-    <div className={`relative min-h-screen transition-all duration-1000 ease-in-out font-sans text-gray-800 dark:text-slate-200 ${themeClass}`}>
+    <div className="relative min-h-screen font-sans overflow-hidden">
+      {/* ── Background Cross-fade Layers ── */}
+      {/* Bottom Layer: The new/current gradient */}
+      <div
+        className="fixed inset-0 pointer-events-none transition-all duration-1000"
+        style={{ background: pageBg }}
+      />
+      
+      {/* Top Layer: The old gradient that fades out when we transition */}
+      <div
+        className={`fixed inset-0 pointer-events-none transition-opacity duration-[3000ms] ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: prevPageBg }}
+      />
 
-      {/* --- Hero: Full-bleed Sky Background + Greeting Overlay --- */}
+      {/* --- Hero: Celestial layer (sun / moon / clouds / stars) on transparent sky --- */}
       <div className="relative">
-        {/* Sky Banner — fills full width, taller for natural blending */}
-        <SkyBanner weatherCode={weather?.weathercode ?? 0} />
-
-        {/* Large gradient fade: sky blends into page background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-white/40 dark:via-slate-950/40 to-transparent" />
+        {/* SkyBanner renders only its celestial elements; the page bg IS the sky */}
+        <SkyBanner weatherCode={weather?.weathercode ?? 0} transparent />
 
         {/* Greeting overlaid on sky */}
         <div className="absolute bottom-0 left-0 right-0 pb-4">
           <div className="max-w-7xl mx-auto px-8">
             <div className="flex flex-col md:flex-row justify-between items-end gap-4">
               <div>
-                <h1 className="text-4xl font-extrabold tracking-tight mb-2 transition-colors duration-500 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+                <h1 className={`text-4xl font-extrabold tracking-tight mb-2 ${titleColor} drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)]`}>
                   {greeting ? `${greeting}, Professor.` : '\u00A0'}
                 </h1>
-                <p className="font-medium flex items-center gap-2 text-white/80 drop-shadow-md">
+                <p className={`font-medium flex items-center gap-2 ${isDark ? 'text-white/80' : 'text-slate-700/80'} drop-shadow-sm`}>
                   <CalendarIcon size={16} />
                   {formattedDate || '\u00A0'}
                 </p>
@@ -483,7 +545,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* --- Main Content (padded, max-width) --- */}
+      {/* --- Cityscape sits directly on the gradient sky --- */}
       <Cityscape />
       <div className="max-w-7xl mx-auto px-8 py-10 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -492,54 +554,54 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Quote Widget */}
-            <div className="animate-fade-in-up delay-100 bg-gradient-to-br from-gray-900/90 to-slate-800/90 dark:from-slate-800/90 dark:to-slate-900/90 backdrop-blur-md rounded-2xl p-6 text-white shadow-xl shadow-gray-900/10 dark:shadow-black/20 border border-white/10 dark:border-slate-700/30 breathing-glow min-h-[160px] flex flex-col justify-center">
-              <Quote className="opacity-30 mb-2" size={24} />
+            <Card theme={theme} className="animate-fade-in-up delay-100 backdrop-blur-md rounded-2xl p-6 shadow-xl border min-h-[160px] flex flex-col justify-center">
+              <Quote className={`${isDark ? 'text-white' : 'text-slate-800'} opacity-30 mb-2`} size={24} />
               {quote ? (
-                <ChatbotQuote quote={quote.quote} author={quote.author} />
+                <ChatbotQuote theme={theme} quote={quote.quote} author={quote.author} />
               ) : (
-                <div className="flex items-center gap-3 text-indigo-200/60 text-sm mt-2 font-medium">
+                <div className="flex items-center gap-3 text-indigo-400/60 text-sm mt-2 font-medium">
                   <Loader2 size={16} className="animate-spin" /> Gathering an inspiring thought...
                 </div>
               )}
-            </div>
+            </Card>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
               {/* Card 1: Rescheduling Alert */}
-              <Card className="p-5 border-l-4 border-l-red-400 bg-red-50/50 dark:bg-red-900/20 animate-fade-in-up delay-200 pulse-attention">
+              <Card theme={theme} className="p-5 border-l-4 border-l-red-400 bg-red-50/50 dark:bg-red-900/20 animate-fade-in-up delay-200 pulse-attention">
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-red-500 dark:text-red-400 text-xs font-bold uppercase tracking-wider">Attention Needed</p>
-                    <h2 className="text-3xl font-extrabold text-gray-800 dark:text-white mt-1 animate-count-up">4</h2>
-                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400 mt-1 leading-tight">Classes to be rescheduled</p>
+                    <h2 className={`text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-800'} mt-1 animate-count-up`}>4</h2>
+                    <p className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-600'} mt-1 leading-tight`}>Classes to be rescheduled</p>
                   </div>
-                  <div className="p-2 bg-white dark:bg-slate-700 rounded-xl text-red-500 dark:text-red-400 shadow-sm"><AlertCircle size={20} /></div>
+                  <div className={`p-2 ${isDark ? 'bg-slate-700 text-red-400' : 'bg-white text-red-500'} rounded-xl shadow-sm`}><AlertCircle size={20} /></div>
                 </div>
               </Card>
 
               {/* Card 2: Quick Note */}
-              <Card className="p-4 relative group animate-fade-in-up delay-300">
+              <Card theme={theme} className="p-4 relative group animate-fade-in-up delay-300">
                 <div className="flex justify-between items-start mb-2">
-                  <p className="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase flex items-center gap-1"><StickyNote size={12} /> Quick Note</p>
+                  <p className={`text-xs font-bold uppercase flex items-center gap-1 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}><StickyNote size={12} /> Quick Note</p>
                 </div>
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Type a reminder here..."
-                  className="w-full bg-transparent resize-none outline-none text-gray-700 dark:text-slate-200 text-sm font-medium placeholder:text-gray-400 dark:placeholder:text-slate-500 h-[60px]"
+                  className={`w-full bg-transparent resize-none outline-none ${isDark ? 'text-slate-200' : 'text-gray-700'} text-sm font-medium placeholder:text-gray-400 dark:placeholder:text-slate-500 h-[60px]`}
                 />
               </Card>
 
               {/* Card 3: Lab Manuals */}
-              <Card className="p-5 border-l-4 border-l-emerald-500 animate-fade-in-up delay-400">
+              <Card theme={theme} className="p-5 border-l-4 border-l-emerald-500 animate-fade-in-up delay-400">
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">Grading Update</p>
-                    <h2 className="text-3xl font-extrabold text-gray-800 dark:text-white mt-1 animate-count-up delay-200">100%</h2>
-                    <p className="text-sm font-medium text-gray-600 dark:text-slate-400 mt-1 leading-tight">Lab manuals assessed</p>
+                    <h2 className={`text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-800'} mt-1 animate-count-up delay-200`}>100%</h2>
+                    <p className={`text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-600'} mt-1 leading-tight`}>Lab manuals assessed</p>
                   </div>
-                  <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl text-emerald-600 dark:text-emerald-400"><CheckCircle size={20} /></div>
+                  <div className={`p-2 ${isDark ? 'bg-emerald-900/30 text-emerald-400' : 'bg-emerald-50 text-emerald-600'} rounded-xl`}><CheckCircle size={20} /></div>
                 </div>
               </Card>
             </div>
@@ -549,7 +611,7 @@ export default function Dashboard() {
               <h3 className={`text-xl font-bold flex items-center gap-2 ${textColor} transition-colors duration-500`}>
                 <Clock size={20} className="opacity-70" /> Upcoming Deadlines
               </h3>
-              <DeadlinesList />
+              <DeadlinesList theme={theme} />
             </div>
 
             {/* Classes Section */}
@@ -560,14 +622,14 @@ export default function Dashboard() {
               <div className="space-y-3">
                 {CLASSES.map((cls, idx) => (
                   <div key={cls.id} className={`group animate-slide-in-left`} style={{ animationDelay: `${600 + idx * 100}ms` }}>
-                    <Card className={`overflow-hidden transition-all duration-300 ${expandedClass === cls.id ? 'ring-2 ring-blue-500 shadow-xl z-10 relative' : ''}`}>
+                    <Card theme={theme} className={`overflow-hidden transition-all duration-300 ${expandedClass === cls.id ? 'ring-2 ring-blue-500 shadow-xl z-10 relative' : ''}`}>
                       {/* Header of Card */}
-                      <div onClick={() => setExpandedClass(expandedClass === cls.id ? null : cls.id)} className="p-5 flex items-center justify-between cursor-pointer hover:bg-gray-50/50 dark:hover:bg-slate-700/50">
+                      <div onClick={() => setExpandedClass(expandedClass === cls.id ? null : cls.id)} className={`p-5 flex items-center justify-between cursor-pointer ${isDark ? 'hover:bg-slate-700/50' : 'hover:bg-gray-50/50'}`}>
                         <div className="flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${cls.color}`}><GraduationCap size={24} /></div>
                           <div>
-                            <h4 className="font-bold text-gray-800 dark:text-white text-lg">{cls.name}</h4>
-                            <p className="text-sm text-gray-500 dark:text-slate-400">{cls.subject} • {cls.students} Students</p>
+                            <h4 className={`font-bold ${isDark ? 'text-white' : 'text-slate-800'} text-lg`}>{cls.name}</h4>
+                            <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>{cls.subject} • {cls.students} Students</p>
                           </div>
                         </div>
                         {expandedClass === cls.id ? <ChevronUp className="text-gray-400 dark:text-slate-500" /> : <ChevronDown className="text-gray-400 dark:text-slate-500" />}
@@ -581,7 +643,7 @@ export default function Dashboard() {
                             <Button onClick={() => handleOpenAssignment(cls)} variant="outline" className="bg-blue-50 dark:bg-blue-900/30 border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50" icon={Plus}>
                               Create Assignment
                             </Button>
-                            <Button variant="outline" icon={Users}>
+                            <Button onClick={() => { setSelectedClassForStudents(cls); setShowStudentsModal(true); }} variant="outline" icon={Users}>
                               View Students
                             </Button>
                             <Button variant="outline" icon={Bell}>
@@ -601,64 +663,55 @@ export default function Dashboard() {
           <div className="space-y-6">
 
             {/* Weather Widget */}
-            <Card className="p-6 relative overflow-hidden text-gray-800 dark:text-slate-200 animate-slide-in-right delay-200">
+            <Card theme={theme} className="p-6 relative overflow-hidden text-gray-800 dark:text-slate-200 animate-slide-in-right delay-200">
               {weatherLoading ? (
                 <div className="flex items-center justify-center py-6 text-gray-400 dark:text-slate-500 gap-2"><RefreshCw className="animate-spin" /> Loading Weather...</div>
               ) : weather ? (
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2 text-sm font-semibold opacity-60">
+                    <div className={`flex items-center gap-2 text-sm font-semibold ${isDark ? 'text-white/60' : 'text-slate-600/60'}`}>
                       <MapPin size={14} /> {location.city}
                     </div>
-                    <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full">{getWeatherIcon(weather.weathercode)}</div>
+                    <div className={`${isDark ? 'bg-amber-900/30' : 'bg-amber-100'} p-2 rounded-full`}>{getWeatherIcon(weather.weathercode)}</div>
                   </div>
 
                   <div className="flex items-end gap-3">
-                    <span className="text-5xl font-extrabold tracking-tighter animate-fade-in-scale delay-400">{Math.round(weather.temperature)}°</span>
+                    <span className={`text-5xl font-extrabold tracking-tighter animate-fade-in-scale delay-400 ${isDark ? 'text-white' : 'text-slate-900'}`}>{Math.round(weather.temperature)}°</span>
                     <div className="mb-1">
-                      <span className="text-lg font-medium opacity-70">C</span>
-                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 animate-fade-in-up delay-500">
+                      <span className={`text-lg font-medium opacity-70 ${isDark ? 'text-white' : 'text-slate-900'}`}>C</span>
+                      <p className={`text-xs mt-0.5 animate-fade-in-up delay-500 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                         {weather.weathercode <= 1 ? 'Clear Sky' : weather.weathercode <= 3 ? 'Partly Cloudy' : weather.weathercode <= 50 ? 'Overcast' : weather.weathercode <= 65 ? 'Rainy' : 'Stormy'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 mt-1 pt-4 border-t border-gray-100 dark:border-slate-700">
-                    <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-400">
+                  <div className={`grid grid-cols-2 gap-3 mt-1 pt-4 border-t ${isDark ? 'border-slate-700' : 'border-gray-100'}`}>
+                    <div className={`flex items-center gap-2 text-xs font-medium ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                       <Wind size={14} className="text-blue-400" /> {weather.windspeed} km/h
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-400">
+                    <div className={`flex items-center gap-2 text-xs font-medium ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                       <CloudFog size={14} className="text-slate-400" /> Humidity High
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-400">
+                    <div className={`flex items-center gap-2 text-xs font-medium ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                       <Sun size={14} className="text-amber-400" /> Feels {Math.round(weather.temperature + (weather.windspeed > 10 ? -2 : 1))}°C
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-400">
+                    <div className={`flex items-center gap-2 text-xs font-medium ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                       <Clock size={14} className="text-indigo-400" /> {weather.is_day ? 'Daytime' : 'Nighttime'}
                     </div>
-                  </div>
-
-                  {/* Wind direction visual */}
-                  <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
-                    <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-slate-500">Wind Dir</span>
-                    <div className="flex-1 bg-gray-100 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full" style={{ width: `${Math.min(100, (weather.windspeed / 30) * 100)}%` }} />
-                    </div>
-                    <span className="text-[10px] font-bold text-gray-400 dark:text-slate-500">{weather.winddirection}°</span>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-center py-6 text-gray-400 dark:text-slate-500 gap-2">Weather unavailable</div>
               )}
             </Card>
+
             {/* Agenda & Tasks Widget */}
             <div className="animate-slide-in-right delay-300">
-              <AgendaAndTasks calendarEvents={calendarEvents} isConnected={isConnected} loading={calendarLoading} />
+              <AgendaAndTasks theme={theme} calendarEvents={calendarEvents} isConnected={isConnected} loading={calendarLoading} />
             </div>
 
-
             {/* News Widget */}
-            <LatestUpdatesWidget />
+            <LatestUpdatesWidget theme={theme} />
 
           </div>
         </div>
@@ -776,6 +829,65 @@ export default function Dashboard() {
               <Button onClick={() => setShowModal(false)}>Assign Task</Button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* --- Students List Modal --- */}
+      {showStudentsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowStudentsModal(false)} />
+          
+          <Card theme={theme} className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[85vh] p-0 animate-scale-in">
+            <div className={`p-6 border-b ${theme.cardBorder} flex justify-between items-center ${isDark ? 'bg-slate-800/40' : 'bg-gray-50'}`}>
+              <div>
+                <h2 className={`text-xl font-bold ${titleColor}`}>Students Roll</h2>
+                <p className={`text-xs font-medium opacity-60 ${textColor}`}>Total 54 enrolled students</p>
+              </div>
+              <button 
+                onClick={() => setShowStudentsModal(false)} 
+                className="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+              >
+                <X size={20} className={textColor} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-2 overflow-y-auto scrollbar-thin">
+              {INDIAN_STUDENTS.map((student, idx) => (
+                <div 
+                  key={student.id} 
+                  className={`flex items-center justify-between p-3 rounded-2xl transition-all hover:translate-x-1 ${
+                    isDark ? 'hover:bg-slate-800/50 border-white/5' : 'hover:bg-blue-50/50 border-gray-100'
+                  } border`}
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-sm ${
+                      idx % 3 === 0 ? 'bg-blue-100 text-blue-600' : idx % 3 === 1 ? 'bg-orange-100 text-orange-600' : 'bg-emerald-100 text-emerald-600'
+                    }`}>
+                      {student.initial}
+                    </div>
+                    <div>
+                      <p className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-800'}`}>{student.name}</p>
+                      <p className={`text-[10px] uppercase tracking-wider font-bold opacity-50 ${textColor}`}>{student.id_num}</p>
+                    </div>
+                  </div>
+                  <div className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                    isDark ? 'bg-slate-700 text-slate-300' : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    Enrolled
+                  </div>
+                </div>
+              ))}
+
+              <div className={`mt-4 pt-4 border-t ${theme.cardBorder} text-center`}>
+                <p className={`text-[10px] uppercase font-bold opacity-40 ${textColor} tracking-widest`}>Showing all enrolled students</p>
+              </div>
+            </div>
+
+            <div className={`p-4 ${isDark ? 'bg-slate-900' : 'bg-white'} border-t ${theme.cardBorder}`}>
+              <Button onClick={() => setShowStudentsModal(false)} className="w-full py-4 text-xs font-bold uppercase tracking-widest shadow-lg">Close Register</Button>
+            </div>
+          </Card>
         </div>
       )}
 

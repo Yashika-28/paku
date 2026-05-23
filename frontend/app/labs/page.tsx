@@ -347,22 +347,22 @@ export default function LabManualGrader() {
                     <InputGroup label="Class / Section" value={classSection} onChange={(e:any) => setClassSection(e.target.value)} placeholder="e.g. AIML-A" />
                     
                     <div>
-                         <label className="text-xs font-bold text-gray-600 uppercase">Exp. Count</label>
-                         <input type="number" value={expCount} onChange={(e) => setExpCount(Number(e.target.value))} className="w-full mt-1 p-2 border rounded-md text-sm" />
+                         <label className="text-xs font-bold text-gray-500 uppercase">Exp. Count</label>
+                         <input type="number" value={expCount} onChange={(e) => setExpCount(Number(e.target.value))} className="w-full mt-1 p-2 border rounded-md text-sm text-gray-600" />
                     </div>
 
                     <div className="flex gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <div className="flex-1">
-                            <label className="text-xs font-bold text-gray-600 uppercase">Obj Marks</label>
-                            <input type="number" value={objMarks} onChange={(e) => setObjMarks(Number(e.target.value))} className="w-full mt-1 p-1 border rounded bg-white text-sm" />
+                            <label className="text-xs font-bold text-gray-500 uppercase">Obj Marks</label>
+                            <input type="number" value={objMarks} onChange={(e) => setObjMarks(Number(e.target.value))} className="w-full mt-1 p-1 border rounded bg-white text-sm text-gray-600" />
                         </div>
                         <div className="flex-1">
-                            <label className="text-xs font-bold text-gray-600 uppercase">Prac Marks</label>
-                            <input type="number" value={pracMarks} onChange={(e) => setPracMarks(Number(e.target.value))} className="w-full mt-1 p-1 border rounded bg-white text-sm" />
+                            <label className="text-xs font-bold text-gray-500 uppercase">Prac Marks</label>
+                            <input type="number" value={pracMarks} onChange={(e) => setPracMarks(Number(e.target.value))} className="w-full mt-1 p-1 border rounded bg-white text-sm text-gray-600" />
                         </div>
                          <div className="flex-1 border-l pl-2 border-gray-300">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Total/Exp</label>
-                            <div className="text-lg font-bold text-purple-700 mt-1">{marksPerExp}</div>
+                            <label className="text-xs font-bold text-gray-500 uppercase">Total/Exp</label>
+                            <div className="text-lg font-bold text-gray-600 mt-1">{marksPerExp}</div>
                         </div>
                     </div>
                 </div>

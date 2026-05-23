@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 interface SkyBannerProps {
   weatherCode?: number;
+  transparent?: boolean;
 }
 
-export default function SkyBanner({ weatherCode = 0 }: SkyBannerProps) {
+export default function SkyBanner({ weatherCode = 0, transparent = false }: SkyBannerProps) {
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('afternoon');
   const [mounted, setMounted] = useState(false);
   const [timeInHours, setTimeInHours] = useState(12);
@@ -88,30 +89,37 @@ export default function SkyBanner({ weatherCode = 0 }: SkyBannerProps) {
 
   return (
     <div className="relative w-full h-60 md:h-72 overflow-hidden">
-      {/* Parallax sky layer */}
-      <div
-        ref={bannerRef}
-        className={`absolute inset-0 w-full h-[130%] bg-gradient-to-r ${skyGradients[timeOfDay]} transition-all duration-[2000ms] ease-in-out sky-parallax`}
+      {/* 
+        This is the shared parallax layer. 
+        If not transparent, it provides the sky gradient background.
+        If transparent, it's just a container for celestial items.
+      */}
+      <div 
+        ref={bannerRef} 
+        className={`absolute inset-0 w-full h-[130%] transition-all duration-[2000ms] ease-in-out sky-parallax ${!transparent ? `bg-gradient-to-r ${skyGradients[timeOfDay]}` : ''}`}
       >
-        {/* Animated gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />
+        {!transparent && (
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10" />
+        )}
 
-        {/* Atmospheric haze layer */}
-        <div
-          className="absolute inset-0 opacity-30 transition-all duration-1000"
-          style={{
-            background: timeOfDay === 'morning'
-              ? 'radial-gradient(ellipse at 20% 80%, rgba(251,191,36,0.3) 0%, transparent 60%)'
-              : timeOfDay === 'evening'
-              ? 'radial-gradient(ellipse at 80% 80%, rgba(251,146,60,0.4) 0%, transparent 60%)'
-              : timeOfDay === 'night'
-              ? 'radial-gradient(ellipse at 70% 30%, rgba(99,102,241,0.15) 0%, transparent 60%)'
-              : 'radial-gradient(ellipse at 50% 20%, rgba(56,189,248,0.2) 0%, transparent 60%)',
-          }}
-        />
+        {/* Atmospheric haze layer — hidden when parent page IS the sky */}
+        {!transparent && (
+          <div
+            className="absolute inset-0 opacity-30 transition-all duration-1000"
+            style={{
+              background: timeOfDay === 'morning'
+                ? 'radial-gradient(ellipse at 20% 80%, rgba(251,191,36,0.3) 0%, transparent 60%)'
+                : timeOfDay === 'evening'
+                ? 'radial-gradient(ellipse at 80% 80%, rgba(251,146,60,0.4) 0%, transparent 60%)'
+                : timeOfDay === 'night'
+                ? 'radial-gradient(ellipse at 70% 30%, rgba(99,102,241,0.15) 0%, transparent 60%)'
+                : 'radial-gradient(ellipse at 50% 20%, rgba(56,189,248,0.2) 0%, transparent 60%)',
+            }}
+          />
+        )}
 
-        {/* Horizon glow — enhanced with larger, softer gradient */}
-        {(timeOfDay === 'morning' || timeOfDay === 'evening') && (
+        {/* Horizon glow — hidden when parent page IS the sky */}
+        {!transparent && (timeOfDay === 'morning' || timeOfDay === 'evening') && (
           <>
             <div className={`absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-orange-200/50 to-transparent transition-opacity duration-[2000ms] ${timeOfDay === 'morning' || timeOfDay === 'evening' ? 'opacity-100' : 'opacity-0'}`} />
             <div className={`absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-orange-300/30 to-transparent transition-opacity duration-[2000ms] ${timeOfDay === 'morning' || timeOfDay === 'evening' ? 'opacity-100' : 'opacity-0'}`} />
@@ -256,24 +264,28 @@ export default function SkyBanner({ weatherCode = 0 }: SkyBannerProps) {
         )}
       </div>
 
-      {/* Ground / horizon line */}
-      <div className={`absolute bottom-0 left-0 right-0 h-10 ${
-        isNight 
-          ? 'bg-gradient-to-t from-slate-900/80 to-transparent' 
-          : 'bg-gradient-to-t from-black/5 to-transparent'
-      }`} />
+      {/* Ground and horizon line — hidden when parent page IS the sky */}
+      {!transparent && (
+        <>
+          <div className={`absolute bottom-0 left-0 right-0 h-10 ${
+            isNight 
+              ? 'bg-gradient-to-t from-slate-900/80 to-transparent' 
+              : 'bg-gradient-to-t from-black/5 to-transparent'
+          }`} />
 
-      {/* Decorative hills silhouette — with two layers for depth */}
-      <svg className="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1200 80" preserveAspectRatio="none">
-        <path 
-          d="M0,80 C150,50 350,70 500,40 C650,10 850,55 1000,25 C1100,10 1150,40 1200,30 L1200,80 Z" 
-          className={isNight ? 'fill-slate-800/40' : 'fill-black/[0.03]'}
-        />
-        <path 
-          d="M0,80 C200,20 400,60 600,30 C800,0 1000,50 1200,20 L1200,80 Z" 
-          className={isNight ? 'fill-slate-800/60' : 'fill-black/5'}
-        />
-      </svg>
+          {/* Decorative hills silhouette — with two layers for depth */}
+          <svg className="absolute bottom-0 left-0 right-0 w-full" viewBox="0 0 1200 80" preserveAspectRatio="none">
+            <path 
+              d="M0,80 C150,50 350,70 500,40 C650,10 850,55 1000,25 C1100,10 1150,40 1200,30 L1200,80 Z" 
+              className={isNight ? 'fill-slate-800/40' : 'fill-black/[0.03]'}
+            />
+            <path 
+              d="M0,80 C200,20 400,60 600,30 C800,0 1000,50 1200,20 L1200,80 Z" 
+              className={isNight ? 'fill-slate-800/60' : 'fill-black/5'}
+            />
+          </svg>
+        </>
+      )}
     </div>
   );
 }
