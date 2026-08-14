@@ -134,24 +134,6 @@ Follow these steps to set up the **EduAssist/PAKU** dashboard locally.
 5.  **Open your browser**
     Navigate to `http://localhost:3000` to access the dashboard.
 
----
-
-## 👥 The Team
-
-**Built with ❤️ by the PAKU Team at The NorthCap University.**
-
-| Name | Role | Responsibilities |
-| :--- | :--- | :--- |
-| **Nischal Sharma** | Team Lead | Computer Vision, Edge Computing, System Arch |
-| **Yashika** | Member | Speech Processing, Deep Learning |
-| **Nikhil Gupta** | Member | NLP, OCR, RAG & AI Applications |
-| **Chahat Gupta** | Member | LLMs, Knowledge Retrieval, Documentation |
-
-**Supervised By:**
-* Dr. Anuradha Dhull (Associate Professor)
-* Dr. Srishti Sharma (Associate Professor)
-
----
 
 ## 📄 License
 
